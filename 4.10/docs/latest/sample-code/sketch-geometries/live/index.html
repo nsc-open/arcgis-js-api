@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Sketch widget - 4.10</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script>
+    require([
+      "esri/widgets/Sketch",
+      "esri/Map",
+      "esri/layers/GraphicsLayer",
+      "esri/views/MapView"
+    ], function(
+      Sketch, Map, GraphicsLayer, MapView
+    ) {
+
+      const layer = new GraphicsLayer();
+
+      const map = new Map({
+        basemap: "streets",
+        layers: [layer]
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 5,
+        center: [90, 45]
+      });
+
+      view.when(function() {
+
+        const sketch = new Sketch({
+          layer: layer,
+          view: view
+        });
+
+        view.ui.add(sketch, "top-right");
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

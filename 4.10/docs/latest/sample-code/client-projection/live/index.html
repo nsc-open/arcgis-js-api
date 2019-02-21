@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Client-side projection - 4.10</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #ffffff;
+    }
+
+    #loader {
+      display: inline;
+      z-index: 30;
+      position: absolute;
+      right: 45%;
+      top: 45%;
+    }
+
+    #projectionDiv {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffffff;
+      padding: 10px;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+
+  <script>
+    require([
+      "esri/views/MapView",
+      "esri/Map",
+      "esri/request",
+      "esri/geometry/Polygon",
+      "esri/geometry/SpatialReference",
+      "esri/layers/FeatureLayer",
+      "esri/core/promiseUtils",
+      "esri/core/watchUtils",
+      "esri/widgets/Legend",
+    ], function(
+      MapView, Map,
+      esriRequest,
+      Polygon, SpatialReference,
+      FeatureLayer, promiseUtils, watchUtils, Legend
+    ) {
+
+      let view, countriesLayer, wgs84Graphics;
+      const loadingDiv = document.getElementById("loader");
+
+      // Reproject the data to the projection selected by the user
+
+      const wkidSelect = document.getElementById("projectWKID");
+      wkidSelect.addEventListener("change", function() {
+        loadingDiv.style.display = "inline";
+        createLayer()
+          .then(recreateView)
+          .catch(errback);
+      });
+
+      // fetch data, convert it to Esri Graphics and the
+      // MapView will automatically project the data
+
+      fetchData()
+        .then(createGraphics)
+        .then(createLayer)
+        .then(recreateView)
+        .catch(errback)
+
+      function fetchData() {
+        return esriRequest(
+          "https://developers.arcgis.com/javascript/latest/sample-code/client-projection/live/percent-forest-area.json"
+        )
+      }
+
+      // Creates Graphics from GeoJSON data
+
+      function createGraphics(response) {
+        const data = response.data;
+
+        if (!data) {
+          data = jsonData;
+        } else {
+          jsonData = data;
+        }
+
+        const graphicsPromise = promiseUtils.create(function(resolve,
+          reject) {
+
+          const graphics = data.features.map(function(feature, i) {
+            // create a polygon instance from the GeoJSON data
+            const polygon = new Polygon({
+              spatialReference: SpatialReference.WGS84
+            });
+
+            // read the GeoJSON's geometry and add to the polygon rings
+            feature.geometry.coordinates.forEach(function(coord) {
+              const coordinates = feature.geometry.type ===
+                "MultiPolygon" ? coord[0] : coord;
+              polygon.addRing(coordinates);
+            });
+
+            const graphic = {
+              geometry: polygon,
+              attributes: feature.properties
+            };
+
+            return graphic;
+          });
+
+          resolve(graphics);
+        });
+
+        return graphicsPromise;
+      }
+
+      function createLayer(graphics) {
+        if (graphics) {
+          wgs84Graphics = graphics;
+        } else {
+          graphics = wgs84Graphics;
+        }
+        // display projected graphics as a FeatureLayer
+        countriesLayer = new FeatureLayer({
+          title: "Forest area by country",
+          source: graphics,
+          objectIdField: "OBJECTID",
+          fields: [{
+            name: "OBJECTID",
+            alias: "ObjectID",
+            type: "oid"
+          }, {
+            name: "Country",
+            alias: "Country",
+            type: "string"
+          }, {
+            name: "y2015",
+            alias: "% forest area (2015)",
+            type: "double"
+          }],
+          popupTemplate: {
+            title: "{Country}",
+            content: "{expression/per-land-area}",
+            expressionInfos: [{
+              title: "per-land-area",
+              name: "per-land-area",
+              expression: "IIF(!IsEmpty($feature.y2015), Round($feature.y2015) + '% of the land area in this country is forest.', 'No data')"
+            }]
+          },
+          renderer: {
+            type: "class-breaks",
+            defaultLabel: "No data",
+            defaultSymbol: {
+              type: "simple-fill",
+              color: "#fcedcd",
+              outline: {
+                color: [255, 255, 255, 0.1],
+                width: 0.5
+              }
+            },
+            visualVariables: [{
+              type: "color",
+              field: "y2015",
+              stops: [
+              {
+                value: 0,
+                color: "#D0D0CB"
+              },
+              {
+                value: 50,
+                color: "#4F6704"
+              }]
+            }]
+          }
+        });
+        return countriesLayer.load();
+      }
+
+      /*************************************************************************
+       * This function is called whenever user selects a new projection
+       * from the projections drop down.
+       * New view and map is created with the spatial reference that user chose
+       *************************************************************************/
+
+      function recreateView(layer) {
+        // use this point to set the center of the view
+        // for the specified spatial reference
+        const viewSpatialReference = new SpatialReference({
+          wkid: wkidSelect.value
+        });
+        let centerPoint = {
+          x: 0,
+          y: 0,
+          spatialReference: viewSpatialReference
+        };
+
+        if (view) {
+          view.map.removeAll();
+          view.container = null;
+          view.map = null;
+        }
+
+        view = new MapView({
+          container: "viewDiv",
+          map: new Map({
+            layers: [layer]
+          }),
+          highlightOptions: {
+            color: "#282828",
+            fillOpacity: 0
+          },
+          spatialReference: viewSpatialReference,
+          center: centerPoint,
+          scale: 166418924
+        });
+
+        view.graphics.add({
+          symbol: {
+            type: "simple-fill",
+            color: null,
+            outline: {
+              width: 0.5,
+              color: [208, 208, 203, 0.7]
+            }
+          },
+          geometry: {
+            type: "extent",
+            xmin: -180,
+            xmax: 180,
+            ymin: -90,
+            ymax: 90,
+            // This geometry automatically reprojects
+            // when added to the view
+            spatialReference: SpatialReference.WGS84
+          }
+        });
+
+        view.ui.add(new Legend({
+          view: view
+        }), "bottom-left");
+
+        view.whenLayerView(countriesLayer).then(function(layerView) {
+          watchUtils.whenFalseOnce(layerView, "updating", function() {
+            // enable the projection dropdown
+            wkidSelect.disabled = false;
+            loadingDiv.style.display = "none";
+          });
+        });
+      }
+
+      // Executes if data retrieval was unsuccessful.
+      function errback(error) {
+        console.error("something went wrong. ", error);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="loader">
+      <img src="https://developers.arcgis.com/javascript/latest/sample-code/client-projection/live/loader.gif">
+    </div>
+    <div id="projectionDiv" class="esri-widget">
+      <p>Select a projection</p>
+      <select id="projectWKID" class="esri-widget" disabled>
+        <option value="8857" selected>Equal Earth Greenwich</option>
+        <option value="8858">Equal Earth Americas</option>
+        <option value="8859">Equal Earth Asia-Pacific</option>
+        <option value="54042">Winkel III</option>
+        <option value="54044">World Hammer Aitoff</option>
+        <option value="54050">World Fuller</option>
+        <option value="54010">World Eckert VI</option>
+        <option value="54021">World Polyconic</option>
+        <option value="54016">World Gall Stereographic</option>
+        <option value="54008">World Sinusoidal</option>
+        <option value="54023">World Loximuthal</option>
+        <option value="54024">World Bonne</option>
+        <option value="54044">World Hammer</option>
+        <option value="8857">Equal Earth Greenwich</option>
+        <option value="8859">Equal Earth Americas</option>
+      </select>
+    </div>
+  </div>
+</body>
+
+</html>

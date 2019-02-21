@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>MapImageLayer - Set definition expressions on sublayers - 4.10</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/MapImageLayer"
+      ],
+      function(
+        Map, SceneView, MapImageLayer
+      ) {
+
+        /*****************************************************************
+         * Create a MapImageLayer instance pointing to a Map Service
+         * containing data about US Cities, Counties, States and Highways.
+         * Define sublayers with visibility for each layer in Map Service.
+         *****************************************************************/
+        var layer = new MapImageLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+          sublayers: [
+          {
+            id: 3,
+            visible: false
+          },
+          {
+            id: 2,
+            visible: true
+          },
+          {
+            id: 1,
+            visible: true
+          },
+          {
+            id: 0,
+            visible: true,
+            definitionExpression: "pop2000 > 100000"
+          }]
+        });
+
+        /*****************************************************************
+         * Add the layer to a map
+         *****************************************************************/
+        var map = new Map({
+          basemap: "dark-gray",
+          layers: [layer]
+        });
+
+        var view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          zoom: 4,
+          center: [-99, 39]
+        });
+
+        /*****************************************************************
+         * Listen for events on when the slider values have changed.
+         * When the slider value changes, apply the new value to the
+         * MapImageLayer definitionExpression.
+         *****************************************************************/
+        layer.when(function() {
+          var cities = layer.findSublayerById(0);
+          var slider = document.querySelector(".population-slider");
+          var total = document.querySelector(".total");
+          slider.addEventListener("change", function () {
+            cities.definitionExpression = "pop2000 > " + slider.value;
+          });
+          slider.addEventListener("input", function () {
+            total.innerText = parseInt(slider.value).toLocaleString();
+          });
+        });
+      });
+  </script>
+
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #viewDiv {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 100px;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      height: 100px;
+      width: 100%;
+      color: #0079c1;
+      background-color: #ffffff;
+      text-align: center;
+    }
+
+    .population-slider {
+      -webkit-appearance: none;
+      height: 35px;
+      padding: 0;
+      width: 95%;
+    }
+
+    .population-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      box-sizing: content-box;
+      border: 12px solid #0079c1;
+      height: 8px;
+      width: 8px;
+      border-radius: 18px;
+      background-color: #fff;
+      cursor: ew-resize;
+      margin-top: -14px;
+      opacity: 0.7;
+    }
+
+    .population-slider::-moz-range-thumb {
+      border: 12px solid #0079c1;
+      height: 8px;
+      width: 8px;
+      border-radius: 18px;
+      background-color: #fff;
+      cursor: ew-resize;
+      margin-top: -14px;
+      opacity: 0.7;
+    }
+
+    .population-slider::-ms-thumb {
+      display: inline-block;
+      border: 12px solid #0079c1;
+      height: 8px;
+      width: 8px;
+      border-radius: 18px;
+      background-color: #fff;
+      cursor: ew-resize;
+      margin-top: 5px; /* note: different margin-top for IE */
+    }
+
+    .population-slider::-webkit-slider-runnable-track {
+      height: 3px;
+      border-color: transparent;
+      color: transparent;
+      background-color: #cccccc;
+    }
+
+    .population-slider::-moz-range-track {
+      height: 3px;
+      background-color: #cccccc;
+    }
+
+    .population-slider::-ms-track {
+      border-color: transparent;
+      color: transparent;
+      height: 3px;
+      background-color: #cccccc;
+    }
+
+    .population-slider::-ms-fill-lower {
+      background-color: #0079c1;
+    }
+
+    .population-slider::-moz-range-progress {
+      background-color: #0079c1;
+    }
+
+    .population-slider::-ms-tooltip {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div class="footer">
+    <h4>Cities with Population greater than <span class="total">100,000</span></h4>
+    <input class="population-slider" type="range" min="1000" max="1000000" step="100"
+      value="100000">
+  </div>
+</body>
+
+</html>

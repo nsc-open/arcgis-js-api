@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Visualize features by type - 4.10</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/themes/dark/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(15, 15, 15, 1);
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend"
+      ],
+      function(
+        Map, MapView, FeatureLayer, Legend
+      ) {
+
+        /******************************************************************
+         *
+         * Define symbols for each unique type. One each for freeways,
+         * highways, and other major roads
+         *
+         ******************************************************************/
+
+        // Symbol for freeways
+        const fwySym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#30ffea",
+          width: "0.5px",
+          style: "solid"
+        };
+
+        // Symbol for U.S. Highways
+        const hwySym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#ff6207",
+          width: "0.5px",
+          style: "solid"
+        };
+
+        // Symbol for other major highways
+        const otherSym = {
+          type: "simple-line", // autocasts as new SimpleLineSymbol()
+          color: "#ef37ac",
+          width: "0.5px",
+          style: "solid"
+        };
+
+        /******************************************************************
+         *
+         * Set each unique value directly in the renderer's constructor.
+         * At least one field must be used (in this case the "CLASS" field).
+         * The label property of each unique value will be used to indicate
+         * the field value and symbol in the legend.
+         *
+         ******************************************************************/
+
+        const hwyRenderer = {
+          type: "unique-value", // autocasts as new UniqueValueRenderer()
+          legendOptions: {
+            title: "Freeway type"
+          },
+          defaultSymbol: otherSym,
+          defaultLabel: "State Highway",
+          field: "CLASS",
+          uniqueValueInfos: [{
+            value: "I", // code for interstates/freeways
+            symbol: fwySym,
+            label: "Interstate"
+          }, {
+            value: "U", // code for U.S. highways
+            symbol: hwySym,
+            label: "US Highway"
+          }]
+        };
+
+        // Set the renderer on the layer
+        const hwyLayer = new FeatureLayer({
+          url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Freeway_System/FeatureServer/2",
+          renderer: hwyRenderer,
+          title: "USA Freeway System",
+          minScale: 0,
+          maxScale: 0
+        });
+
+        const statesLayer = new FeatureLayer({
+          url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3",
+          renderer: {
+            type: "simple", // autocasts as new SimpleRenderer()
+            symbol: {
+              type: "simple-fill", // autocasts as new SimpleFillSymbol()
+              color: [0, 0, 0, 0],
+              outline: {
+                color: [50, 50, 50, 0.7],
+                width: 0.5
+              }
+            }
+          }
+        });
+
+        // Add the layer to the map
+        const map = new Map({
+          layers: [statesLayer, hwyLayer]
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          extent: {
+            xmin: -3094834,
+            ymin: -44986,
+            xmax: 2752687,
+            ymax: 3271654,
+            spatialReference: {
+              wkid: 5070
+            }
+          },
+          spatialReference: {
+            // NAD_1983_Contiguous_USA_Albers
+            wkid: 5070
+          }
+        });
+
+        /******************************************************************
+         *
+         * Add layers to layerInfos on the legend
+         *
+         ******************************************************************/
+
+        const legend = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: hwyLayer
+          }]
+        });
+
+        view.ui.add(legend, "bottom-left");
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
