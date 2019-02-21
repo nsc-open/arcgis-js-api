@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.9/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../../../Color","../../../../core/screenUtils"],function(h,b,g,e){function d(f,a,c){if(!a)return null;var b=g.toUnitRGBA(a.color),d=c.opacity;c=c.slicePlaneEnabled;switch(a.type){case "solid":return f.createSolidEdgeMaterial({color:b,size:e.pt2px(a.size),extensionLength:e.pt2px(a.extensionLength),opacity:d,slicePlaneEnabled:c});case "sketch":return f.createSketchEdgeMaterial({color:b,size:e.pt2px(a.size),extensionLength:e.pt2px(a.extensionLength),opacity:d,slicePlaneEnabled:c})}}
+Object.defineProperty(b,"__esModule",{value:!0});b.createMaterial=function(b,a,c){return d(b,a&&a.enabled&&a.edges||null,c)};b.createMaterialFromEdges=d});

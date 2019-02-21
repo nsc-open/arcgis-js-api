@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.9/esri/copyright.txt for details.
+//>>built
+define(["require","exports"],function(k,f){Object.defineProperty(f,"__esModule",{value:!0});f.unrolledCopyVec4=function(b,a){var d=b.typedBuffer;b=b.typedBufferStride;var c=a.typedBuffer,f=a.typedBufferStride;a=a.count;for(var e=0;e<a;e++){var g=e*b,h=e*f;d[g]=c[h];d[g+1]=c[h+1];d[g+2]=c[h+2];d[g+3]=c[h+3]}};f.unrolledCopyVec3=function(b,a){var d=b.typedBuffer;b=b.typedBufferStride;var c=a.typedBuffer,f=a.typedBufferStride;a=a.count;for(var e=0;e<a;e++){var g=e*b,h=e*f;d[g]=c[h];d[g+1]=c[h+1];d[g+
+2]=c[h+2]}};f.unrolledCopyVec2=function(b,a){var d=b.typedBuffer;b=b.typedBufferStride;var c=a.typedBuffer,f=a.typedBufferStride;a=a.count;for(var e=0;e<a;e++){var g=e*b,h=e*f;d[g]=c[h];d[g+1]=c[h+1]}};f.makeDenseSingle=function(b,a){var d=b.count;a||(a=new b.TypedArrayConstructor(d));for(var c=0;c<d;c++)a[c]=b.get(c);return a}});

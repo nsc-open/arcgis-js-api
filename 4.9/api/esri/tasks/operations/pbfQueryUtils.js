@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.9/esri/copyright.txt for details.
+//>>built
+define("require exports ../../core/Error ../../core/Logger ../../layers/graphics/OptimizedFeatureSet ./pbfFeatureServiceParser".split(" "),function(n,c,f,g,h,k){Object.defineProperty(c,"__esModule",{value:!0});var l=g.getLogger("esri.tasks.operations.pbfQueryUtils");c.parsePBFFeatureQuery=function(b){try{var a=k.parseFeatureQuery(b).queryResult.featureResult;if(a&&a.features&&a.features.length&&a.objectIdFieldName){var c=a.objectIdFieldName;b=0;for(var e=a.features;b<e.length;b++){var d=e[b];d.attributes&&
+(d.objectId=d.attributes[c])}}return a}catch(m){return a=new f("query:parsing-pbf","Error while parsing FeatureSet PBF payload",{error:m}),l.error(a),new h.default}}});

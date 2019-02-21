@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.9/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../../core/tsSupport/generatorHelper ../../../../core/tsSupport/awaiterHelper ./objectResourceUtils ../../webgl-engine/lib/lodRendering/LodResources".split(" "),function(p,b,h,k,l,m){function e(a){var c=[];a.stageResources.geometries.forEach(function(b,d){c.push({material:a.materialsByComponent[d][0],geometry:b,textures:a.stageResources.textures})});return{components:c,faceCount:a.lodMetrics?a.lodMetrics.faceCount:null,minScreenSpaceRadius:null,pivotOffset:a.pivotOffset}}
+function f(a){return{levels:a.map(function(a){return e(a)})}}function g(a,c){void 0===c&&(c=n);a=m.computeFaceCount(a);return Math.sqrt(a/(c*Math.PI))}Object.defineProperty(b,"__esModule",{value:!0});b.makeLodLevelResources=e;b.makeLodResources=f;b.fetchObjectLodResources=function(a,c){return k(this,void 0,void 0,function(){var b;return h(this,function(d){switch(d.label){case 0:return[4,l.fetchLod(a,c)];case 1:return b=d.sent(),[2,f(b)]}})})};b.estimateMinScreenSpaceRadius=g;b.fillEstimatedMinScreenSpaceRadius=
+function(a){a.levels.forEach(function(a){a.minScreenSpaceRadius=g(a)});a.levels[0].minScreenSpaceRadius=Math.min(2,a.levels[0].minScreenSpaceRadius)};var n=.05});

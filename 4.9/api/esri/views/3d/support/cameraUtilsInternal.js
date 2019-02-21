@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.9/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../lib/gl-matrix","./mathUtils"],function(p,d,a,h){Object.defineProperty(d,"__esModule",{value:!0});var m=a.vec3d.create(),k=a.vec3d.create();d.createDirectionUp=function(){return{direction:a.vec3d.create(),up:a.vec3d.create()}};d.directionToHeadingTilt=function(e,c,l,f,d){var b=m;a.vec3d.normalize(e,b);var g=a.vec3d.dot(b,f),n=0<g,g=Math.abs(g);.99<g&&(g=Math.abs(a.vec3d.dot(c,f)),.99>g?(a.vec3d.set(c,b),n&&a.vec3d.scale(b,-1)):b=null);c=0;b&&(a.vec3d.scale(f,a.vec3d.dot(f,
+b),k),a.vec3d.subtract(b,k),c=a.vec3d.dot(b,d)/(a.vec3d.length(b)*a.vec3d.length(d)),a.vec3d.cross(b,d,k),c=(0<a.vec3d.dot(k,f)?1:-1)*h.rad2deg(h.acos(c)));e=h.rad2deg(h.acos(-a.vec3d.dot(f,e)/a.vec3d.length(e)));return l?(l.heading=c,l.tilt=e,l):{heading:c,tilt:e}}});
