@@ -6,18 +6,18 @@ website: https://developers.arcgis.com/downloads/apis-and-sdks?product=javascrip
 
 # 4.10
 
-https://jackgit.github.io/arcgis-js-api/4.10/docs
+https://nsc-open.github.io/arcgis-js-api/4.10/docs
 
-https://jackgit.github.io/arcgis-js-api/4.10/api
+https://nsc-open.github.io/arcgis-js-api/4.10/api
 
 # 4.9
 
-https://jackgit.github.io/arcgis-js-api/4.9/docs
+https://nsc-open.github.io/arcgis-js-api/4.9/docs
 
-https://jackgit.github.io/arcgis-js-api/4.9/api
+https://nsc-open.github.io/arcgis-js-api/4.9/api
 
 # 4.8
 
-https://jackgit.github.io/arcgis-js-api/4.8/docs
+https://nsc-open.github.io/arcgis-js-api/4.8/docs
 
-https://jackgit.github.io/arcgis-js-api/4.8/api
+https://nsc-open.github.io/arcgis-js-api/4.8/api
