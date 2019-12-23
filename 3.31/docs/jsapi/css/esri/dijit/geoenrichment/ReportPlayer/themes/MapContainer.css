@@ -1,0 +1,100 @@
+﻿
+/* Map */
+
+.esriGEMapContainer {
+    position: absolute;
+}
+
+    .esriGEMapContainer .mapContainer_content {
+        position: relative; /* This is to enable overflow: hidden on the map */
+    }
+
+    /* Map Attribution */
+
+    .esriGEMapContainer .esriAttributionItem,
+    .esriGEMapContainer .esriAttributionLastItem {
+        display: none !important;
+    }
+
+/* Map Legend */
+
+/* NOTE: do not put it deeper, has to stay this way for printing, see LegendToLayerUtil.js */
+
+.esriGEReportPlayer_mapLegend {
+    position: absolute !important;
+    background-color: white;
+    min-width: 70px;
+    max-width: 200px;
+    overflow-y: auto;
+    cursor: move;
+    font-size: 10px; /* do not remove this, need for printing the legend, see LegendToLayerUtil.js */
+    color: #4d4d4d;
+}
+
+    .esriGEReportPlayer_mapLegend .esriLegendService {
+        padding: 5px;
+    }
+
+    .esriGEReportPlayer_mapLegend .esriLegendServiceLabel {
+        word-break: break-word;
+    }
+
+/* NOTE: esriGEReportPlayer class is used on purpose, because some buttons are moved out of the map container into the dynamic section toolbar. */
+
+/* Zoom Slider */
+/* Need to move it away from the dynamic settings button */
+
+.esriGEReportPlayer .esriSimpleSliderTR {
+    top: 45px;
+    border-radius: 0px;
+    right: 5px;
+    z-index: 50 !important; /* above the info window */
+}
+
+/* Home Button */
+
+.esriGEReportPlayer .HomeButton {
+    position: absolute;
+    top: 118px;
+    right: 5px;
+    z-index: 50 !important; /* above the info window */
+}
+
+    .esriGEReportPlayer .HomeButton .home {
+        border-radius: 0px;
+        padding: 1px;
+    }
+
+/* Lock button */
+
+.esriGEReportPlayer .mapNavigationLockButton {
+    position: absolute;
+    background-image: url('./images/lock/lockWhite.svg');
+    display: block;
+    background-color: rgba(100, 100, 100, 0.75);
+    background-repeat: no-repeat;
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-size: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 50 !important; /* above the info window */
+    right: 5px;
+    top: 170px;
+}
+
+    .esriGEReportPlayer .mapNavigationLockButton.unlocked {
+        background-image: url('./images/lock/unlockWhite.svg');
+    }
+
+
+
+
+
+/* Printing */
+
+.esriGEReportPlayerPrint .esriSimpleSliderTR,
+.esriGEReportPlayerPrint .HomeButton {
+    display: none !important;
+}

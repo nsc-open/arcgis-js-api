@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Popup - Arcade FeatureSet</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.31/esri/css/esri.css">
+
+<style>
+  html, body, #map {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+<script>
+  var dojoConfig = {
+    has: {
+      "esri-featurelayer-webgl": 1
+    }
+  };
+</script>
+
+<script src="https://js.arcgis.com/3.31/"></script>
+
+<script type="text/plain" id="nearest-restaurant-arcade">
+  var searchDistance = 1;
+  var restaurants = FeatureSetById($map, /* Restaurants_London */ "Restaurants_London_4772");
+  // returns all restaurants within 500m of the hotel
+  var closestRestaurants = Intersects( restaurants, BufferGeodetic( $feature, searchDistance, "kilometers") );
+  var minDistance = Infinity;
+  var closestRestaurant;
+  // Of the restaurants within 500m of the hotel,
+  // the closest one is returned along with the distance
+  for (var listing in closestRestaurants){
+    var restaurantDistance = Distance(listing, $feature, "meters");
+    if(restaurantDistance < minDistance){
+      minDistance = restaurantDistance;
+      closestRestaurant = listing;
+    }
+  };
+  "Hotel: " + $feature.name + "\n" +
+  "Closest Restaurant: " + closestRestaurant.name + "\n" +
+  IIF(!IsEmpty(closestRestaurant.opening_hours), "Hours: " + closestRestaurant.opening_hours, "");
+</script>
+
+<script>
+
+require([
+  "esri/dijit/PopupTemplate",
+  "esri/arcadeProfiles/popupProfile",
+  "esri/arcgis/utils",
+  "dojo/domReady!"
+],
+function(
+  PopupTemplate,
+  popupProfile,
+  arcgisUtils
+) {
+
+  var map;
+
+  var nearestRestaurantArcade = document.getElementById("nearest-restaurant-arcade").text;
+
+  // load a webmap containing layers for restaurants and hotels
+  arcgisUtils.createMap("33618a191bee4ebc806922fccc536769", "map").then(function (response) {
+    map = response.map;
+
+    // initialize the popup profile for the arcade expressions intended for use in the popup.
+    // This ensures that Arcade expressions properly load and execute geometry and feature set
+    // functions asynchronously
+    return popupProfile.initialize( [ nearestRestaurantArcade ] );
+  }).then(function(){
+
+    var hotels = map.getLayer(map.graphicsLayerIds[0]);
+
+    // Reference the Arcade expression in the PopupTemplate's content.
+    // This expression will display the name of the restaurant closest to
+    // the selected hotel. If available, the opening hours of the
+    // closest restaurant are also displayed
+    hotels.setInfoTemplate(new PopupTemplate({
+      title: "Closest Restaurant",
+      description: "{expression/nearest-restaurant}",
+      expressionInfos: [{
+        name: "nearest-restaurant",
+        title: "Nearest Restaurant",
+        expression: nearestRestaurantArcade
+      }]
+    }));
+
+  });
+
+});
+</script>
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+﻿
+/* Simple Infographic: Data Drilling Zoom */
+
+.simpleInfographic_dataDrillingViewDiv.isZoomAnimation {
+    box-shadow: 0px 0px 3px 3px rgba(50, 50, 50, 0.2);
+}
+
+    /* toolbar */
+
+    .simpleInfographic_dataDrillingViewDiv.isZoomAnimation .simpleInfographic_topToolbar {
+        left: 0px;
+        top: -42px;
+        height: 42px;
+        right: 0px;
+        position: absolute;
+        background-color: rgba(0,0,0,0.01); /* prevents clicking outside */
+        text-align: right;
+        padding-top: 10px;
+        font-size: 0px; /* to remove padding around buttons */
+    }
+
+/* dynamic settings */
+
+.isZoomAnimation .simpleInfographic_dynamicSettingsToolbarRoot .sectionDynamicSettings_buttonBar > div {
+    width: 24px;
+    height: 24px;
+}
+
+/* export button */
+
+.simpleInfographic_dataDrillingViewDiv.isZoomAnimation .simpleInfographic_exportButton {
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    background-image: url("../images/commands/exportWhite.svg");
+    cursor: pointer;
+}
+
+/* print button */
+
+.simpleInfographic_dataDrillingViewDiv.isZoomAnimation .simpleInfographic_printButton {
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    background-image: url("../images/commands/printWhite.svg");
+    cursor: pointer;
+}
+
+/* back button */
+
+.simpleInfographic_dataDrillingViewDiv.isZoomAnimation .simpleInfographic_backToMainViewButton {
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: center;
+    width: 24px;
+    height: 24px;
+    background-image: url("../images/close/closeWindowWhite.svg");
+    cursor: pointer;
+}
+
+/* zoom screen */
+
+.simpleInfographic_dataDrillingViewDivScreen {
+    background-color: rgba(70, 70, 70, 0.7);
+}
+
+    .simpleInfographic_dataDrillingViewDivScreen.mobile {
+        background-color: rgba(70, 70, 70, 0.95);
+    }
+
+/* z-index */
+
+.simpleInfographic_dataDrillingViewDiv.isZoomAnimation,
+.simpleInfographic_dataDrillingViewDivScreen {
+    z-index: 151; /* above the map */
+}
